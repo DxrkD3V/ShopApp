@@ -1,0 +1,37 @@
+package com.example.tienda.model
+
+import java.io.Serializable
+
+data class Producto(
+    val status: String,
+    val message: List<ProductoData>?
+)
+
+data class ProductoData(
+    val id: Int,
+    val name: String,
+    val imageurl: String,
+    val description: String,
+    val price: Double,
+    val stock: Int,
+    val manufacture: String,
+    val motor: String,
+    val hp: Int,
+    val maxVelocity: Int,
+    val categoryId: Int,
+    val units: Int = 0
+) : Serializable
+
+data class ProductoPage(
+    val content: List<ProductoData>,
+    val totalElements: Int,
+    val totalPages: Int,
+    val number: Int,
+    val size: Int,
+    val last: Boolean
+)
+
+data class AddItemCartDTO(
+    val productId: Long,
+    val addUnits: Int = 1
+)
