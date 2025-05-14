@@ -1,6 +1,5 @@
 package com.example.tienda.recycler
 
-import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,11 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tienda.AddToCart
 import com.example.tienda.R
-import com.example.tienda.model.Producto
-import com.example.tienda.model.ProductoData
+import com.example.tienda.model.ProductoDto
 
 class AdapterProducto(
-    private var dataSet: List<ProductoData>
+    private var dataSet: List<ProductoDto>
 ) : RecyclerView.Adapter<ProductView>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductView {
@@ -41,7 +39,7 @@ class AdapterProducto(
     }
 
 
-    fun updateProductos(newDataSet: List<ProductoData>) {
+    fun updateProductos(newDataSet: List<ProductoDto>) {
         dataSet = newDataSet
         notifyDataSetChanged()
     }

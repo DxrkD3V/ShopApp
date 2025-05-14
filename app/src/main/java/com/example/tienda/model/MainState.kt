@@ -4,7 +4,6 @@ import LoginUserDto
 import android.content.Context
 import com.example.tienda.utils.TokenManager
 import okhttp3.OkHttpClient
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -36,7 +35,8 @@ class MainState(private val context: Context) {
             false
         }
     }
-    suspend fun recuperarProductos(): List<ProductoData> {
+
+    suspend fun recuperarProductos(): List<ProductoDto> {
         val response = service.getProductos()
         return if (response.isSuccessful && response.body() != null) {
             response.body()!!
@@ -44,11 +44,12 @@ class MainState(private val context: Context) {
             emptyList()
         }
     }
+
     suspend fun recuperarProductosFiltrados(
         categoriaId: Long?,
         pagina: Int,
         tamanio: Int = 5
-    ): Pair<List<ProductoData>?, Int>? {
+    ): Pair<List<ProductoDto>?, Int>? {
         val response = service.getProductosFiltrados(
             cat = categoriaId,
             page = pagina,
@@ -64,23 +65,25 @@ class MainState(private val context: Context) {
     }
 
 
-    suspend fun recuperarCarrito(): List<ProductoData> {
-        val call = service.getCarrito()
-        return if (call.isSuccessful && call.body() != null) {
-            call.body()!!
+    suspend fun recuperarCarrito(): CartResponseDto {
+        val response = service.getCarrito()
+
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
         } else {
-            emptyList()
+            return CartResponseDto(emptyList(), 0, 0.0)
         }
     }
 
-    suspend fun eliminarProductoCarrito(dto: AddItemCartDTO): Boolean {
-        val response = service.eliminarDelCarrito(dto)
+    suspend fun eliminarProductoCarrito(productId: Long): Boolean {
+        val response = service.eliminarDelCarrito(productId)
         return response.isSuccessful
     }
 
-    suspend fun anadirProductoCarrito(dto: AddItemCartDTO): Boolean {
-        val response = service.anadirAlCarrito(dto)
+    suspend fun anadirProductoCarrito(productId: Long, cantidad: Int): Boolean {
+        val response = service.anadirAlCarrito(productId, cantidad)
         return response.isSuccessful
     }
+
 
 }

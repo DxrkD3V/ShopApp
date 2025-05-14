@@ -1,18 +1,19 @@
 package com.example.tienda.recycler
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tienda.R
-import com.example.tienda.model.ProductoData
+import com.example.tienda.model.CartItemDto
 
 class AdapterCarrito(
-    private var dataSet: List<ProductoData>,
-    private val onSumarClick: (ProductoData) -> Unit,
-    private val onRestarClick: (ProductoData) -> Unit,
-    private val onItemClick: (ProductoData) -> Unit
+    private var dataSet: List<CartItemDto>,
+    private val onSumarClick: (CartItemDto) -> Unit,
+    private val onRestarClick: (CartItemDto) -> Unit,
+    private val onItemClick: (CartItemDto) -> Unit
 ) : RecyclerView.Adapter<CartView>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartView {
@@ -24,41 +25,39 @@ class AdapterCarrito(
     override fun getItemCount(): Int = dataSet.size
 
     override fun onBindViewHolder(holder: CartView, position: Int) {
-        val producto = dataSet[position]
+        val cartItem = dataSet[position]
 
         Glide.with(holder.itemView.context)
-            .load(producto.imageurl)
+            .load(cartItem.imageUrl)
             .into(holder.imagenProducto)
 
-        holder.nombreProducto.text = producto.name
-        holder.precioUnidad.text = "$${producto.price}"
-        val total = producto.price * producto.units
-        holder.precioTotal.text = "Total: $${"%.2f".format(total)}"
-
-        holder.cantidad.text = producto.units.toString()
+        holder.nombreProducto.text = cartItem.productName
+        holder.precioUnidad.text = "$${cartItem.unitPrice}"
+        holder.precioTotal.text = "Total: $${"%.2f".format(cartItem.subtotal)}"
+        holder.cantidad.text = cartItem.quantity.toString()
 
         holder.btnSumar.setOnClickListener {
-            onSumarClick(producto)
+            onSumarClick(cartItem)
         }
 
         holder.btnRestar.setOnClickListener {
-            onRestarClick(producto)
+            onRestarClick(cartItem)
         }
-
-        holder.itemView.setBackgroundColor(
-            ContextCompat.getColor(holder.itemView.context, android.R.color.white)
-        )
 
         holder.itemView.setOnClickListener {
             holder.itemView.setBackgroundColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
             )
-            onItemClick(producto)
+            onItemClick(cartItem)
         }
+        //DEBUG
+        Log.d("AdapterCarrito", "Mostrando: ${cartItem.productName}")
     }
 
-    fun updateProductos(newDataSet: List<ProductoData>) {
+    fun updateProductos(newDataSet: List<CartItemDto>) {
         dataSet = newDataSet
+        //DEBUG
+        Log.d("AdapterCarrito", "Datos nuevos: ${newDataSet.size}")
         notifyDataSetChanged()
     }
 }

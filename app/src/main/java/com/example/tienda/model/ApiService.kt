@@ -6,26 +6,28 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
     @GET("products")
-    suspend fun getProductos(): Response<List<ProductoData>>
+    suspend fun getProductos(): Response<List<ProductoDto>>
 
-    @GET("products/category/{id}/")
-    suspend fun getProductosPorCategoria(@Path("id") categoryId: Int): Response<List<ProductoData>>
+    @GET("cart/")
+    suspend fun getCarrito(): Response<CartResponseDto>
 
-    @GET("cart")
-    suspend fun getCarrito(): Response<List<ProductoData>>
+    @POST("cart/{productId}/{count}")
+    suspend fun anadirAlCarrito(
+        @Path("productId") productId: Long,
+        @Path("count") count: Int
+    ): Response<CartResponseDto>
 
-    @HTTP(method = "DELETE", path = "cart/delete", hasBody = true)
-    suspend fun eliminarDelCarrito(@Body dto: AddItemCartDTO): Response<Unit>
+    @DELETE("cart/{productId}")
+    suspend fun eliminarDelCarrito(
+        @Path("productId") productId: Long
+    ): Response<CartResponseDto>
 
-    @HTTP(method = "POST", path = "cart/add", hasBody = true)
-    suspend fun anadirAlCarrito(@Body dto: AddItemCartDTO): Response<Unit>
 
     @POST("auth/login")
     suspend fun login(@Body loginUserDto: LoginUserDto): Response<TokensDto>

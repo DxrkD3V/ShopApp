@@ -113,8 +113,8 @@ class Productos : Fragment() {
 
     private fun updatePaginationControls() {
         textPageNumber.text = (currentPage + 1).toString()
-        //buttonPrev.isEnabled = currentPage > 0
-        //buttonNext.isEnabled = currentPage < totalPages - 1
+        buttonPrev.isEnabled = currentPage > 0
+        buttonNext.isEnabled = currentPage < totalPages - 1
     }
 
     private fun goToPreviousPage() {

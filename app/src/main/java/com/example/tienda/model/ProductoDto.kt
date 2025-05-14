@@ -2,12 +2,7 @@ package com.example.tienda.model
 
 import java.io.Serializable
 
-data class Producto(
-    val status: String,
-    val message: List<ProductoData>?
-)
-
-data class ProductoData(
+data class ProductoDto(
     val id: Int,
     val name: String,
     val imageurl: String,
@@ -23,15 +18,10 @@ data class ProductoData(
 ) : Serializable
 
 data class ProductoPage(
-    val content: List<ProductoData>,
+    val content: List<ProductoDto>,
     val totalElements: Int,
     val totalPages: Int,
     val number: Int,
     val size: Int,
     val last: Boolean
-)
-
-data class AddItemCartDTO(
-    val productId: Long,
-    val addUnits: Int = 1
 )

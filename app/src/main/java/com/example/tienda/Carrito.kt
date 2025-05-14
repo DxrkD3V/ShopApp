@@ -7,9 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tienda.model.AddItemCartDTO
+import com.example.tienda.model.CartItemDto
 import com.example.tienda.model.MainState
-import com.example.tienda.model.ProductoData
 import com.example.tienda.recycler.AdapterCarrito
 import kotlinx.coroutines.launch
 
@@ -22,7 +21,7 @@ class Carrito : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return inflater.inflate(R.layout.fragment_carrito, container, false)
     }
 
@@ -32,78 +31,70 @@ class Carrito : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerCarrito)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = AdapterCarrito(emptyList(), { producto ->
-            sumarProducto(producto)
-        }, { producto ->
-            restarProducto(producto)
-        }) { producto ->
-            mostrarDialogoEliminar(producto)
-        }
+        adapter = AdapterCarrito(
+            dataSet = emptyList(),
+            onSumarClick = { cartItem -> sumarProducto(cartItem) },
+            onRestarClick = { cartItem -> restarProducto(cartItem) },
+            onItemClick = { cartItem -> mostrarDialogoEliminar(cartItem) }
+        )
 
         recyclerView.adapter = adapter
-
         mainState = MainState(requireContext())
 
+        cargarCarrito()
+    }
+
+    private fun cargarCarrito() {
         lifecycleScope.launch {
             try {
-                val carrito = mainState.recuperarCarrito()
-                adapter.updateProductos(carrito)
+                val cartResponse = mainState.recuperarCarrito()
+                adapter.updateProductos(cartResponse.items)
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Error al cargar el carrito", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun sumarProducto(producto: ProductoData) {
+    private fun sumarProducto(cartItem: CartItemDto) {
         lifecycleScope.launch {
             try {
-                val dto = AddItemCartDTO(productId = producto.id.toLong(), addUnits = 1)
-                val exito = mainState.anadirProductoCarrito(dto)
-                if (exito) {
-                    val actualizado = mainState.recuperarCarrito()
-                    adapter.updateProductos(actualizado)
-                } else {
-                    Toast.makeText(requireContext(), "Error al añadir unidad", Toast.LENGTH_SHORT).show()
-                }
+                val exito = mainState.anadirProductoCarrito(cartItem.productId, 1)
+                if (exito) cargarCarrito()
+                else Toast.makeText(requireContext(), "Error al añadir unidad", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Error al añadir producto", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun restarProducto(producto: ProductoData) {
-        if (producto.units > 1) {
+    private fun restarProducto(cartItem: CartItemDto) {
+        if (cartItem.quantity > 1) {
             lifecycleScope.launch {
                 try {
-                    val dto = AddItemCartDTO(productId = producto.id.toLong(), addUnits = -1)
-                    val exito = mainState.anadirProductoCarrito(dto)
-                    if (exito) {
-                        val actualizado = mainState.recuperarCarrito()
-                        adapter.updateProductos(actualizado)
-                    } else {
-                        Toast.makeText(requireContext(), "Error al restar unidad", Toast.LENGTH_SHORT).show()
-                    }
+                    val exito = mainState.anadirProductoCarrito(cartItem.productId, -1)
+                    if (exito) cargarCarrito()
+                    else Toast.makeText(requireContext(), "Error al restar unidad", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Error al restar producto", Toast.LENGTH_SHORT).show()
                 }
             }
         } else {
-            Toast.makeText(requireContext(), "La cantidad no puede ser menor que 1", Toast.LENGTH_SHORT).show()
+            mostrarDialogoEliminar(cartItem)
         }
     }
 
-    private fun mostrarDialogoEliminar(producto: ProductoData) {
+    private fun mostrarDialogoEliminar(cartItem: CartItemDto) {
         val builder = android.app.AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar del carrito")
-        builder.setMessage("¿Eliminar ${producto.name} del carrito?")
+        builder.setMessage("¿Eliminar ${cartItem.productName} del carrito?")
         builder.setPositiveButton("Sí") { _, _ ->
             lifecycleScope.launch {
                 try {
-                    mainState.eliminarProductoCarrito(AddItemCartDTO(productId = producto.id.toLong()))
-                    val actualizado = mainState.recuperarCarrito()
-                    adapter.updateProductos(actualizado)
+                    val exito = mainState.eliminarProductoCarrito(cartItem.productId)
+                    if (exito) cargarCarrito()
+                    else Toast.makeText(requireContext(), "Error al eliminar producto", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error al eliminar", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error al eliminar producto", Toast.LENGTH_SHORT).show()
                 }
             }
         }
