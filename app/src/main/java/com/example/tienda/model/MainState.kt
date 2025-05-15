@@ -64,6 +64,14 @@ class MainState(private val context: Context) {
         }
     }
 
+    suspend fun getAllCategories(): List<CategoryDto> {
+        val response = service.getAllCategories()
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
+        } else {
+            return emptyList()
+        }
+    }
 
     suspend fun recuperarCarrito(): CartResponseDto {
         val response = service.getCarrito()
@@ -77,6 +85,11 @@ class MainState(private val context: Context) {
 
     suspend fun eliminarProductoCarrito(productId: Long): Boolean {
         val response = service.eliminarDelCarrito(productId)
+        return response.isSuccessful
+    }
+
+    suspend fun eliminarAllProductosCarrito(): Boolean {
+        val response = service.eliminarAllDelCarrito()
         return response.isSuccessful
     }
 

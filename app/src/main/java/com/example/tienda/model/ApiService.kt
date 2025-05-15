@@ -17,20 +17,8 @@ interface ApiService {
     @GET("cart/")
     suspend fun getCarrito(): Response<CartResponseDto>
 
-    @POST("cart/{productId}/{count}")
-    suspend fun anadirAlCarrito(
-        @Path("productId") productId: Long,
-        @Path("count") count: Int
-    ): Response<CartResponseDto>
-
-    @DELETE("cart/{productId}")
-    suspend fun eliminarDelCarrito(
-        @Path("productId") productId: Long
-    ): Response<CartResponseDto>
-
-
-    @POST("auth/login")
-    suspend fun login(@Body loginUserDto: LoginUserDto): Response<TokensDto>
+    @GET("categories")
+    suspend fun getAllCategories(): Response<List<CategoryDto>>
 
     @GET("products/find")
     suspend fun getProductosFiltrados(
@@ -41,4 +29,24 @@ interface ApiService {
         @Query("pageNumber") page: Int = 0,
         @Query("pageSize") size: Int = 5
     ): Response<ProductoPage>
+
+    @POST("cart/{productId}/{count}")
+    suspend fun anadirAlCarrito(
+        @Path("productId") productId: Long,
+        @Path("count") count: Int
+    ): Response<CartResponseDto>
+
+    @POST("auth/login")
+    suspend fun login(@Body loginUserDto: LoginUserDto): Response<TokensDto>
+
+    @DELETE("cart/{productId}")
+    suspend fun eliminarDelCarrito(
+        @Path("productId") productId: Long
+    ): Response<CartResponseDto>
+
+    @DELETE("cart/")
+    suspend fun eliminarAllDelCarrito(): Response<CartResponseDto>
+
+
+
 }

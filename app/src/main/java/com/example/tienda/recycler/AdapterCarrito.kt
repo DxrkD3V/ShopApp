@@ -2,6 +2,7 @@ package com.example.tienda.recycler
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -12,9 +13,9 @@ import com.example.tienda.model.CartItemDto
 class AdapterCarrito(
     private var dataSet: List<CartItemDto>,
     private val onSumarClick: (CartItemDto) -> Unit,
-    private val onRestarClick: (CartItemDto) -> Unit,
-    private val onItemClick: (CartItemDto) -> Unit
-) : RecyclerView.Adapter<CartView>() {
+    private val onRestarClick: (CartItemDto, View) -> Unit,
+    private val onItemClick: (CartItemDto, View) -> Unit
+): RecyclerView.Adapter<CartView>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartView {
         val view = LayoutInflater.from(parent.context)
@@ -41,14 +42,14 @@ class AdapterCarrito(
         }
 
         holder.btnRestar.setOnClickListener {
-            onRestarClick(cartItem)
+            onRestarClick(cartItem, holder.itemView)
         }
 
         holder.itemView.setOnClickListener {
             holder.itemView.setBackgroundColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
             )
-            onItemClick(cartItem)
+            onItemClick(cartItem, holder.itemView)
         }
         //DEBUG
         Log.d("AdapterCarrito", "Mostrando: ${cartItem.productName}")

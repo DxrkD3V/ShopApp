@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tienda.model.CategoryDto
 import com.example.tienda.model.MainState
 import com.example.tienda.recycler.AdapterProducto
 import kotlinx.coroutines.launch
@@ -32,8 +33,7 @@ class Productos : Fragment() {
     private var totalPages = 1
     private var categoryId: Long? = null
 
-    private val categories = listOf("4x4", "Eléctricos", "Deportivos", "Familiares", "Lujo")
-    private val categoryIds = listOf(1L, 2L, 3L, 4L, 5L)
+    private var categories: List<CategoryDto> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -63,26 +63,33 @@ class Productos : Fragment() {
         spinnerCategorias = view.findViewById(R.id.spinnerCategorias)
         textPageNumber = view.findViewById(R.id.textPageNumber)
 
-
-        val spinnerAdapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_spinner_item, categories
-        )
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerCategorias.adapter = spinnerAdapter
-
         mainState = MainState(requireContext())
+        loadCategories()
         loadProducts()
-
-
 
         spinnerCategorias.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
-                categoryId = categoryIds[position]
+                categoryId = categories[position].id
                 currentPage = 0
                 loadProducts()
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>) {}
+        }
+    }
+
+    private fun loadCategories(){
+        lifecycleScope.launch {
+            try {
+                categories = mainState.getAllCategories()
+                val spinnerAdapter = ArrayAdapter(
+                    requireContext(), android.R.layout.simple_spinner_item, categories.map { it.name }
+                )
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerCategorias.adapter = spinnerAdapter
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error al cargar categorías: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

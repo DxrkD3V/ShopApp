@@ -3,6 +3,7 @@ package com.example.tienda
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,8 +35,8 @@ class Carrito : Fragment() {
         adapter = AdapterCarrito(
             dataSet = emptyList(),
             onSumarClick = { cartItem -> sumarProducto(cartItem) },
-            onRestarClick = { cartItem -> restarProducto(cartItem) },
-            onItemClick = { cartItem -> mostrarDialogoEliminar(cartItem) }
+            onRestarClick = { cartItem, itemView -> restarProducto(cartItem, itemView) },
+            onItemClick = { cartItem, itemView -> mostrarDialogoEliminar(cartItem, itemView) }
         )
 
         recyclerView.adapter = adapter
@@ -67,7 +68,7 @@ class Carrito : Fragment() {
         }
     }
 
-    private fun restarProducto(cartItem: CartItemDto) {
+    private fun restarProducto(cartItem: CartItemDto, itemView: View) {
         if (cartItem.quantity > 1) {
             lifecycleScope.launch {
                 try {
@@ -79,11 +80,11 @@ class Carrito : Fragment() {
                 }
             }
         } else {
-            mostrarDialogoEliminar(cartItem)
+            mostrarDialogoEliminar(cartItem, itemView)
         }
     }
 
-    private fun mostrarDialogoEliminar(cartItem: CartItemDto) {
+    private fun mostrarDialogoEliminar(cartItem: CartItemDto, itemView: View) {
         val builder = android.app.AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar del carrito")
         builder.setMessage("¿Eliminar ${cartItem.productName} del carrito?")
@@ -91,14 +92,19 @@ class Carrito : Fragment() {
             lifecycleScope.launch {
                 try {
                     val exito = mainState.eliminarProductoCarrito(cartItem.productId)
-                    if (exito) cargarCarrito()
+                    if (exito) {
+                        cargarCarrito()
+                        itemView.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    }
                     else Toast.makeText(requireContext(), "Error al eliminar producto", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Error al eliminar producto", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        builder.setNegativeButton("No", null)
+        builder.setNegativeButton("No") { _, _ ->
+            itemView.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+        }
         builder.show()
     }
 }
