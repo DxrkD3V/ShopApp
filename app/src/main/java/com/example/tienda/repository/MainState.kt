@@ -1,7 +1,11 @@
-package com.example.tienda.model
+package com.example.tienda.repository
 
 import LoginUserDto
 import android.content.Context
+import com.example.tienda.model.ApiService
+import com.example.tienda.model.CartResponseDto
+import com.example.tienda.model.CategoryDto
+import com.example.tienda.model.ProductoDto
 import com.example.tienda.utils.TokenManager
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -36,14 +40,14 @@ class MainState(private val context: Context) {
         }
     }
 
-    suspend fun recuperarProductos(): List<ProductoDto> {
-        val response = service.getProductos()
-        return if (response.isSuccessful && response.body() != null) {
-            response.body()!!
-        } else {
-            emptyList()
-        }
-    }
+//    suspend fun recuperarProductos(): List<ProductoDto> {
+//        val response = service.getProductos()
+//        return if (response.isSuccessful && response.body() != null) {
+//            response.body()!!
+//        } else {
+//            emptyList()
+//        }
+//    }
 
     suspend fun recuperarProductosFiltrados(
         categoriaId: Long?,
@@ -88,10 +92,10 @@ class MainState(private val context: Context) {
         return response.isSuccessful
     }
 
-    suspend fun eliminarAllProductosCarrito(): Boolean {
-        val response = service.eliminarAllDelCarrito()
-        return response.isSuccessful
-    }
+//    suspend fun eliminarAllProductosCarrito(): Boolean {
+//        val response = service.eliminarAllDelCarrito()
+//        return response.isSuccessful
+//    }
 
     suspend fun anadirProductoCarrito(productId: Long, cantidad: Int): Boolean {
         val response = service.anadirAlCarrito(productId, cantidad)

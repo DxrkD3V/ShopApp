@@ -15,17 +15,17 @@ class AdapterCarrito(
     private val onSumarClick: (CartItemDto) -> Unit,
     private val onRestarClick: (CartItemDto, View) -> Unit,
     private val onItemClick: (CartItemDto, View) -> Unit
-): RecyclerView.Adapter<CartView>() {
+): RecyclerView.Adapter<CartViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartView {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_cart, parent, false)
-        return CartView(view)
+        return CartViewHolder(view)
     }
 
     override fun getItemCount(): Int = dataSet.size
 
-    override fun onBindViewHolder(holder: CartView, position: Int) {
+    override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val cartItem = dataSet[position]
 
         Glide.with(holder.itemView.context)
@@ -40,7 +40,6 @@ class AdapterCarrito(
         holder.btnSumar.setOnClickListener {
             onSumarClick(cartItem)
         }
-
         holder.btnRestar.setOnClickListener {
             onRestarClick(cartItem, holder.itemView)
         }

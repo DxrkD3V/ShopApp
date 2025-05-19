@@ -11,17 +11,17 @@ import com.example.tienda.model.ProductoDto
 
 class AdapterProducto(
     private var dataSet: List<ProductoDto>
-) : RecyclerView.Adapter<ProductView>() {
+) : RecyclerView.Adapter<ProductViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductView {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_product, parent, false)
-        return ProductView(view)
+        return ProductViewHolder(view)
     }
 
     override fun getItemCount(): Int = dataSet.size
 
-    override fun onBindViewHolder(holder: ProductView, position: Int) {
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val producto = dataSet[position]
 
         Glide.with(holder.itemView.context)

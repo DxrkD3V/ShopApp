@@ -1,5 +1,9 @@
 package com.example.tienda
 
+import Carrito
+import MainActivity
+import Productos
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
@@ -45,7 +49,11 @@ class Navegacion : AppCompatActivity(), NavigationView.OnNavigationItemSelectedL
             val fragmentTransactionInicio: FragmentTransaction = fragmentManagerInicio.beginTransaction()
             val fragmentInicio: Inicio = Inicio.newInstance("http://10.0.2.2:8000/")
             fragmentTransactionInicio.add(R.id.myLinearL, fragmentInicio).commit()
-
+            logout.setOnClickListener {
+                val intent = Intent(this@Navegacion, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
             myNavegationView.setNavigationItemSelectedListener { menuItem ->
                 if (menuItem.itemId == R.id.id_productos) {
                     val productosFragment = Productos()
