@@ -2,11 +2,12 @@ package com.example.tienda.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asLiveData
 import com.example.tienda.model.CartItemDto
 import com.example.tienda.repository.MainState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class CarritoViewModel(application: Application) : AndroidViewModel(application) {
@@ -14,10 +15,10 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
     private val mainState = MainState(application.applicationContext)
 
     private val _carrito = MutableStateFlow<List<CartItemDto>>(emptyList())
-    val carrito: StateFlow<List<CartItemDto>> = _carrito
+    val carrito: LiveData<List<CartItemDto>> = _carrito.asLiveData()
 
     private val _mensaje = MutableStateFlow<String?>(null)
-    val mensaje: StateFlow<String?> = _mensaje
+    val mensaje: LiveData<String?> = _mensaje.asLiveData()
 
     fun cargarCarrito() {
         viewModelScope.launch {

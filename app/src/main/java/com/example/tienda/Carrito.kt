@@ -1,3 +1,5 @@
+package com.example.tienda.ui.carrito
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tienda.R
@@ -48,18 +49,14 @@ class Carrito : Fragment() {
         )
         recyclerView.adapter = adapter
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.carrito.collect { productos ->
-                adapter.updateProductos(productos)
-            }
+        viewModel.carrito.observe(viewLifecycleOwner) { productos ->
+            adapter.updateProductos(productos)
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.mensaje.collect { mensaje ->
-                mensaje?.let {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                    viewModel.limpiarMensaje()
-                }
+        viewModel.mensaje.observe(viewLifecycleOwner) { mensaje ->
+            mensaje?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                viewModel.limpiarMensaje()
             }
         }
 

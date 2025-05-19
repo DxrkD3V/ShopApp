@@ -101,6 +101,4 @@ class MainState(private val context: Context) {
         val response = service.anadirAlCarrito(productId, cantidad)
         return response.isSuccessful
     }
-
-
 }

@@ -1,6 +1,5 @@
 package com.example.tienda
 
-import Carrito
 import MainActivity
 import Productos
 import android.content.Intent
@@ -18,6 +17,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.tienda.databinding.ActivityMainBinding
 import com.example.tienda.databinding.ActivityNavegacionBinding
+import com.example.tienda.ui.carrito.Carrito
 import com.example.tienda.utils.TokenManager
 import com.google.android.material.navigation.NavigationView
 
